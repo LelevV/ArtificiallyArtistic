@@ -1,10 +1,6 @@
 """Random prompt generator for generative art models"""
 import random
 
-ART_CONTENT_TYPE = "art_content_type.txt"
-ART_DESCRIPTION = "art_description.txt"
-ART_STYLE = "art_style.txt"
-
 
 def get_txt_file_as_str(file: str) -> str:
     """Read file and return as str."""
@@ -13,7 +9,16 @@ def get_txt_file_as_str(file: str) -> str:
     return string
 
 
-def random_prompt_generator():
+def read_art_file(file: str) -> list:
+    """Read the art .txt file. Each line should contain one option."""
+    file_str = get_txt_file_as_str(file)
+    options = file_str.split("\n")
+    return options
+
+
+def random_prompt_generator(
+    art_descriptions: list, art_styles: list, content_types: list
+) -> str:
     """
     Returns one prompt for a generative art model like stable diffusion.
 
@@ -38,20 +43,26 @@ def random_prompt_generator():
         Composition: it refers to aspect ratio, camera view and resolution.
 
     """
-
-    description = get_txt_file_as_str(ART_DESCRIPTION).split("\n")
-    style = get_txt_file_as_str(ART_STYLE).split("\n")
-    content_type = get_txt_file_as_str(ART_CONTENT_TYPE).split("\n")
-
     prompt = [
-        f"a {random.choice(style)} {random.choice(content_type)}",
-        f"about {random.choice(description)}",
+        f"a {random.choice(art_styles)} {random.choice(content_types)}",
+        f"about {random.choice(art_descriptions)}",
     ]
     prompt = " ".join(prompt).replace("  ", " ")
-
     return prompt
 
 
 if __name__ == "__main__":
+    ART_CONTENT_TYPE = "art_content_type.txt"
+    ART_DESCRIPTION = "art_description.txt"
+    ART_STYLE = "art_style.txt"
+
+    art_descriptions_list = read_art_file(ART_DESCRIPTION)
+    art_styles_list = read_art_file(ART_STYLE)
+    content_types_list = read_art_file(ART_CONTENT_TYPE)
+
     for i in range(10):
-        print(random_prompt_generator())
+        print(
+            random_prompt_generator(
+                art_descriptions_list, art_styles_list, content_types_list
+            )
+        )
